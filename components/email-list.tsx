@@ -22,6 +22,10 @@ interface EmailListProps {
   onArchiveEmail: (id: string) => void
   onDeleteEmail: (id: string) => void
   onSnoozeEmail: (id: string, snoozeUntil: Date) => void
+  loading?: boolean
+  error?: string | null
+  onToggleSelect?: (email: Email) => void
+  selectedEmails?: Email[]
 }
 
 export default function EmailList({
@@ -33,6 +37,10 @@ export default function EmailList({
   onArchiveEmail,
   onDeleteEmail,
   onSnoozeEmail,
+  loading = false,
+  error = null,
+  onToggleSelect,
+  selectedEmails = [],
 }: EmailListProps) {
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -99,7 +107,18 @@ export default function EmailList({
       </div>
 
       <ScrollArea className="flex-1">
-        {filteredEmails.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+            <p>Loading emails...</p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <div className="text-red-500 mb-2">⚠️</div>
+            <p className="text-red-500 text-center px-4">{error}</p>
+            <p className="text-sm mt-2">Check that the backend API is running</p>
+          </div>
+        ) : filteredEmails.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <p>No emails found</p>
           </div>
@@ -114,6 +133,9 @@ export default function EmailList({
                 onArchive={() => onArchiveEmail(email.id)}
                 onDelete={() => onDeleteEmail(email.id)}
                 onSnooze={onSnoozeEmail}
+                onToggleSelect={onToggleSelect}
+                isSelectedForDraft={selectedEmails.some(e => e.id === email.id)}
+                showCheckbox={!!onToggleSelect}
               />
             ))}
           </div>
@@ -130,9 +152,12 @@ interface EmailListItemProps {
   onArchive: () => void
   onDelete: () => void
   onSnooze: (id: string, snoozeUntil: Date) => void
+  onToggleSelect?: (email: Email) => void
+  isSelectedForDraft?: boolean
+  showCheckbox?: boolean
 }
 
-function EmailListItem({ email, isSelected, onSelect, onArchive, onDelete, onSnooze }: EmailListItemProps) {
+function EmailListItem({ email, isSelected, onSelect, onArchive, onDelete, onSnooze, onToggleSelect, isSelectedForDraft = false, showCheckbox = false }: EmailListItemProps) {
   const [isHovered, setIsHovered] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
 
@@ -178,11 +203,22 @@ function EmailListItem({ email, isSelected, onSelect, onArchive, onDelete, onSno
           : isHovered
             ? "bg-muted/50 border-l-4 border-transparent"
             : "border-l-4 border-transparent"
-      } ${!email.read ? "font-medium" : ""}`}
-      onClick={onSelect}
+      } ${!email.read ? "font-medium" : ""} ${
+        isSelectedForDraft ? "bg-blue-50 dark:bg-blue-950/20" : ""
+      }`}
+      onClick={showCheckbox ? undefined : onSelect}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {showCheckbox && (
+        <input
+          type="checkbox"
+          checked={isSelectedForDraft}
+          onChange={() => onToggleSelect?.(email)}
+          className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          onClick={(e) => e.stopPropagation()}
+        />
+      )}
       <AvatarWithLogo sender={email.sender} />
 
       <div className="flex-1 min-w-0">
@@ -211,7 +247,24 @@ function EmailListItem({ email, isSelected, onSelect, onArchive, onDelete, onSno
               New
             </Badge>
           )}
+          {email.drafts && email.drafts.length > 0 && (
+            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 text-xs px-1.5 py-0">
+              {email.drafts.length} Draft Response{email.drafts.length > 1 ? 's' : ''}
+            </Badge>
+          )}
         </div>
+
+        {/* Draft responses preview */}
+        {email.drafts && email.drafts.length > 0 && (
+          <div className="mt-2 p-2 bg-green-50 dark:bg-green-950/20 rounded-md border border-green-200 dark:border-green-800">
+            <div className="text-xs font-medium text-green-800 dark:text-green-200 mb-1">
+              AI Draft Response:
+            </div>
+            <div className="text-xs text-green-700 dark:text-green-300 truncate">
+              {email.drafts[0].content.substring(0, 120)}...
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action buttons - positioned absolutely to not affect row height */}

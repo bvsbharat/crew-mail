@@ -1,4 +1,4 @@
-export type EmailFolder = "unified" | "unread" | "flagged" | "snoozed" | "archived" | "trash" | string
+export type EmailFolder = "unified" | "unread" | "flagged" | "snoozed" | "archived" | "trash" | "drafts" | string
 
 export type EmailCategory = "work" | "personal" | "social" | "updates" | "promotions"
 
@@ -34,6 +34,14 @@ export interface EmailAttachment {
   url: string
 }
 
+export interface EmailDraft {
+  draft_id: string
+  content: string
+  created_at: string
+  status: string
+  response_type: string
+}
+
 export interface Email {
   id: string
   subject: string
@@ -48,8 +56,10 @@ export interface Email {
   archived: boolean
   deleted: boolean
   attachments?: EmailAttachment[]
+  labels: string[]
   account: string
   categories?: EmailCategory[]
+  drafts?: EmailDraft[]
 }
 
 export interface EmailAccount {

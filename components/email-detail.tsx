@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   ArrowLeft,
   Archive,
@@ -13,6 +13,8 @@ import {
   Download,
   Printer,
   Star,
+  Bot,
+  FileText,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -25,6 +27,8 @@ import { Badge } from "@/components/ui/badge"
 import { AvatarWithLogo } from "@/components/avatar-with-logo"
 import ComposeEmail from "@/components/compose-email"
 import { useToast } from "@/hooks/use-toast"
+import { useEmailApi } from "@/hooks/use-email-api"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface EmailDetailProps {
   email: Email
@@ -38,6 +42,10 @@ export default function EmailDetail({ email, onClose, onArchive, onDelete, onSno
   const [showDetails, setShowDetails] = useState(false)
   const [replyOpen, setReplyOpen] = useState(false)
   const { toast } = useToast()
+  const { getDrafts } = useEmailApi()
+
+  // Use drafts directly from the email object
+  const relatedDrafts = email.drafts || []
 
   // Helper function to determine which badges to show
   const getBadges = () => {
@@ -188,6 +196,68 @@ export default function EmailDetail({ email, onClose, onArchive, onDelete, onSno
               </div>
             )}
           </div>
+
+          {/* AI Generated Draft Responses Section */}
+          {relatedDrafts.length > 0 && (
+            <div className="mt-8 border-t border-border/50 pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Bot className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-semibold">AI Generated Draft Responses</h3>
+                <Badge variant="secondary">{relatedDrafts.length}</Badge>
+              </div>
+              <div className="space-y-4">
+                {relatedDrafts.map((draft, index) => (
+                  <Card key={index} className="border-blue-200 bg-blue-50/50">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          Draft Response
+                        </CardTitle>
+                        <Badge variant="outline" className="text-xs">
+                          Draft #{index + 1}
+                        </Badge>
+                      </div>
+                      {draft.created_at && (
+                         <CardDescription className="text-xs">
+                           Generated on {formatDate(new Date(draft.created_at))}
+                         </CardDescription>
+                       )}
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                       <div className="prose prose-sm max-w-none text-sm">
+                         {draft.content ? (
+                           draft.content.split('\n\n').map((paragraph: string, pIndex: number) => (
+                             <p key={pIndex} className="mb-2 last:mb-0">{paragraph}</p>
+                           ))
+                         ) : (
+                           <p className="text-muted-foreground italic">No content available</p>
+                         )}
+                       </div>
+                      <div className="flex gap-2 mt-4">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            // Copy draft content to compose modal
+                            setReplyOpen(true)
+                            // You could pass the draft content to the compose modal here
+                          }}
+                        >
+                          Use This Draft
+                        </Button>
+                        <Button size="sm" variant="ghost">
+                          Edit Draft
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+
         </div>
       </ScrollArea>
 

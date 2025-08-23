@@ -16,6 +16,9 @@ import {
   Mail,
   AlertCircle,
   PenSquare,
+  Bot,
+  RefreshCw,
+  FileText,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -31,6 +34,9 @@ interface SidebarProps {
   onSelectFolder: (folder: EmailFolder) => void
   onToggleSidebar: () => void
   onSendEmail?: (email: any) => void
+  onToggleAgentDraft?: () => void
+  onFetchEmailsWithAgent?: () => Promise<void>
+  showAgentDraft?: boolean
 }
 
 export default function Sidebar({
@@ -39,6 +45,9 @@ export default function Sidebar({
   onSelectFolder,
   onToggleSidebar,
   onSendEmail,
+  onToggleAgentDraft,
+  onFetchEmailsWithAgent,
+  showAgentDraft,
 }: SidebarProps) {
   const [accountsOpen, setAccountsOpen] = useState(true)
   const [composeOpen, setComposeOpen] = useState(false)
@@ -49,6 +58,7 @@ export default function Sidebar({
     { id: "unread", label: "Unread", icon: AlertCircle },
     { id: "flagged", label: "Flagged", icon: Flag },
     { id: "snoozed", label: "Snoozed", icon: Clock },
+    { id: "drafts", label: "Drafts", icon: FileText },
     { id: "archived", label: "Archived", icon: Archive },
     { id: "trash", label: "Trash", icon: Trash2 },
   ]
@@ -69,6 +79,26 @@ export default function Sidebar({
           <Button variant="default" className="w-full justify-start mb-2" onClick={() => setComposeOpen(true)}>
             <PenSquare className="mr-2 h-4 w-4" />
             Compose
+          </Button>
+
+          {/* Agent Draft Button */}
+          <Button 
+            variant={showAgentDraft ? "secondary" : "outline"}
+            className="w-full justify-start mb-2" 
+            onClick={onToggleAgentDraft}
+          >
+            <Bot className="mr-2 h-4 w-4" />
+            AI Draft
+          </Button>
+
+          {/* Fetch Emails with Agent Button */}
+          <Button 
+            variant="outline"
+            className="w-full justify-start mb-4" 
+            onClick={onFetchEmailsWithAgent}
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Fetch Emails
           </Button>
 
           {/* Main folders */}
