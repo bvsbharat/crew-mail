@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import Sidebar from "@/components/sidebar"
 import EmailList from "@/components/email-list"
 import EmailDetail from "@/components/email-detail"
@@ -27,7 +27,8 @@ export default function EmailClient() {
   const { 
     emails, 
     loading, 
-    error, 
+    error,
+    sendEmail, 
     fetchEmails, 
     fetchEmailDetails,
     fetchEmailsWithAgent,
@@ -43,22 +44,26 @@ export default function EmailClient() {
   const filteredEmails = useMemo(() => {
     if (selectedFolder === "drafts") {
       // Convert drafts to email format for display
-      return drafts.map((draft, index) => ({
-        id: `draft-${index}`,
-        subject: draft.agent_response?.subject || "Draft Response",
+      return drafts.map((draft) => ({
+        id: draft.id,
+        subject: draft.subject,
         sender: {
           name: "AI Assistant",
           email: "ai@assistant.com",
         },
         recipients: [],
-        content: draft.agent_response?.content || draft.agent_response || "No content",
+        content: draft.content,
         date: new Date().toISOString(),
-        read: true,
+        read: false,
         flagged: false,
         snoozed: false,
         archived: false,
         deleted: false,
-        account: "drafts",
+        account: "work",
+        labels: [],
+        categories: [],
+        attachments: [],
+        drafts: []
       }))
     }
 
@@ -131,18 +136,18 @@ export default function EmailClient() {
   }, [selectedEmail])
 
   // Handle email selection
-  const handleEmailSelect = async (email: Email) => {
+  const handleEmailSelect = useCallback(async (email: Email) => {
     setSelectedEmail(email)
 
     // Mark as read locally
-    setEmails(emails.map((e) => (e.id === email.id ? { ...e, read: true } : e)))
+    setEmails(prevEmails => prevEmails.map((e) => (e.id === email.id ? { ...e, read: true } : e)))
 
     // Fetch full email details if needed
     if (!email.content || email.content === email.sender.name) {
       const fullEmail = await fetchEmailDetails(email.id)
       if (fullEmail) {
         setSelectedEmail(fullEmail)
-        setEmails(emails.map((e) => (e.id === email.id ? fullEmail : e)))
+        setEmails(prevEmails => prevEmails.map((e) => (e.id === email.id ? { ...e, ...fullEmail } : e)))
       }
     }
 
@@ -150,7 +155,7 @@ export default function EmailClient() {
     if (isMobile) {
       setDetailOpen(true)
     }
-  }
+  }, [fetchEmailDetails, isMobile])
 
   // Handle email snooze
   const handleSnoozeEmail = (emailId: string, snoozeUntil: Date) => {
@@ -159,7 +164,7 @@ export default function EmailClient() {
 
   // Handle email archive
   const handleArchiveEmail = (emailId: string) => {
-    setEmails(emails.map((email) => (email.id === emailId ? { ...email, archived: true } : email)))
+    setEmails(prevEmails => prevEmails.map((email) => (email.id === emailId ? { ...email, archived: true } : email)))
 
     if (selectedEmail?.id === emailId) {
       setSelectedEmail(null)
@@ -168,7 +173,7 @@ export default function EmailClient() {
 
   // Handle email delete
   const handleDeleteEmail = (emailId: string) => {
-    setEmails(emails.map((email) => (email.id === emailId ? { ...email, deleted: true } : email)))
+    setEmails(prevEmails => prevEmails.map((email) => (email.id === emailId ? { ...email, deleted: true } : email)))
 
     if (selectedEmail?.id === emailId) {
       setSelectedEmail(null)
@@ -176,13 +181,34 @@ export default function EmailClient() {
   }
 
   // Handle sending email
-  const handleSendEmail = (email: any) => {
-    // In a real app, you would send the email to a server
-    // For now, we'll just show a toast notification
-    toast({
-      title: "Email Sent",
-      description: `Your email to ${email.to} has been sent.`,
-    })
+  const handleSendEmail = async (email: any) => {
+    try {
+      const emailData = {
+        to: email.to,
+        cc: email.cc,
+        bcc: email.bcc,
+        subject: email.subject,
+        content: email.content,
+        from_email: email.from,
+        reply_to_id: email.replyToId
+      }
+      
+      const success = await sendEmail(emailData)
+      if (!success) {
+        toast({
+          title: "Error",
+          description: "Failed to send email. Please try again.",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error('Error sending email:', error)
+      toast({
+        title: "Error",
+        description: "Failed to send email. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   // Handle email selection for agent draft
@@ -238,7 +264,7 @@ export default function EmailClient() {
         handleEmailSelect(firstVisibleEmail)
       }
     }
-  }, [emails, filteredEmails, selectedEmail, loading])
+  }, [emails, filteredEmails, selectedEmail, loading, handleEmailSelect])
 
   return (
     <div className="flex h-screen w-full">

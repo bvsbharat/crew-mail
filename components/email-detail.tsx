@@ -41,8 +41,9 @@ interface EmailDetailProps {
 export default function EmailDetail({ email, onClose, onArchive, onDelete, onSnooze }: EmailDetailProps) {
   const [showDetails, setShowDetails] = useState(false)
   const [replyOpen, setReplyOpen] = useState(false)
+  const [selectedDraftContent, setSelectedDraftContent] = useState<string | undefined>(undefined)
   const { toast } = useToast()
-  const { getDrafts } = useEmailApi()
+  const { getDrafts, sendEmail } = useEmailApi()
 
   // Use drafts directly from the email object
   const relatedDrafts = email.drafts || []
@@ -67,11 +68,38 @@ export default function EmailDetail({ email, onClose, onArchive, onDelete, onSno
   }
 
   // Handle sending reply
-  const handleSendReply = (replyEmail: any) => {
-    toast({
-      title: "Reply Sent",
-      description: `Your reply to ${email.sender.name} has been sent.`,
-    })
+  const handleSendReply = async (replyEmail: any) => {
+    try {
+      const emailData = {
+        to: replyEmail.to,
+        cc: replyEmail.cc,
+        bcc: replyEmail.bcc,
+        subject: replyEmail.subject.startsWith('Re: ') ? replyEmail.subject : `Re: ${replyEmail.subject}`,
+        content: replyEmail.content,
+        from_email: replyEmail.from,
+        reply_to_id: email.id
+      }
+      
+      const success = await sendEmail(emailData)
+      if (!success) {
+        toast({
+          title: "Error",
+          description: "Failed to send reply. Please try again.",
+          variant: "destructive",
+        })
+      } else {
+        // Close the reply modal on successful send
+        setReplyOpen(false)
+        setSelectedDraftContent(undefined)
+      }
+    } catch (error) {
+      console.error('Error sending reply:', error)
+      toast({
+        title: "Error",
+        description: "Failed to send reply. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   return (
@@ -240,8 +268,8 @@ export default function EmailDetail({ email, onClose, onArchive, onDelete, onSno
                           variant="outline"
                           onClick={() => {
                             // Copy draft content to compose modal
+                            setSelectedDraftContent(draft.content)
                             setReplyOpen(true)
-                            // You could pass the draft content to the compose modal here
                           }}
                         >
                           Use This Draft
@@ -329,12 +357,15 @@ export default function EmailDetail({ email, onClose, onArchive, onDelete, onSno
       {/* Reply Modal */}
       <ComposeEmail
         open={replyOpen}
-        onClose={() => setReplyOpen(false)}
+        onClose={() => {
+          setReplyOpen(false)
+          setSelectedDraftContent(undefined)
+        }}
         onSend={handleSendReply}
         replyTo={{
           to: email.sender.email,
           subject: email.subject,
-          content: email.content,
+          content: selectedDraftContent || email.content,
         }}
       />
     </div>

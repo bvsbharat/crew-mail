@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { X, Paperclip, Minus, ChevronDown, Bold, Italic, List, ListOrdered, Link, ImageIcon } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -30,12 +30,25 @@ export default function ComposeEmail({ open, onClose, onSend, replyTo }: Compose
   const [cc, setCc] = useState("")
   const [bcc, setBcc] = useState("")
   const [subject, setSubject] = useState(replyTo?.subject ? `Re: ${replyTo.subject}` : "")
-  const [content, setContent] = useState("")
+  const [content, setContent] = useState(replyTo?.content || "")
   const [attachments, setAttachments] = useState<File[]>([])
   const [sending, setSending] = useState(false)
   const [showCcBcc, setShowCcBcc] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedAccount, setSelectedAccount] = useState(mockAccounts[0])
+
+  // Update form fields when replyTo changes
+  useEffect(() => {
+    if (replyTo) {
+      setTo(replyTo.to || "")
+      setSubject(replyTo.subject ? `Re: ${replyTo.subject}` : "")
+      setContent(replyTo.content || "")
+    } else {
+      setTo("")
+      setSubject("")
+      setContent("")
+    }
+  }, [replyTo])
 
   // Handle file selection
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {

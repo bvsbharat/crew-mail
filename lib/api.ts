@@ -73,6 +73,22 @@ export interface AgentDraftRequest {
   }>
 }
 
+export interface SendEmailRequest {
+  to: string
+  cc?: string
+  bcc?: string
+  subject: string
+  content: string
+  from_email?: string
+  reply_to_id?: string
+}
+
+export interface SendEmailResponse {
+  success: boolean
+  message: string
+  email_id?: string
+}
+
 class ApiError extends Error {
   constructor(message: string, public status?: number) {
     super(message)
@@ -182,6 +198,13 @@ export const emailApi = {
     return fetchApi<DraftResponse>('/api/emails/agent-draft', {
       method: 'POST',
       body: JSON.stringify(agentDraftRequest),
+    })
+  },
+
+  async sendEmail(emailData: SendEmailRequest): Promise<SendEmailResponse> {
+    return fetchApi<SendEmailResponse>('/api/emails/send', {
+      method: 'POST',
+      body: JSON.stringify(emailData),
     })
   },
 

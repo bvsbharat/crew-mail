@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { emailApi, type EmailBatch, type ApiEmail, type EmailAnalysis, type DraftRequest, type AgentDraftRequest, ApiError } from '@/lib/api'
+import { emailApi, type EmailBatch, type ApiEmail, type EmailAnalysis, type DraftRequest, type AgentDraftRequest, type SendEmailRequest, ApiError } from '@/lib/api'
 import { transformApiEmailToEmail } from '@/lib/email-utils'
 import type { Email, EmailFolder } from '@/types/email'
 import { useToast } from '@/hooks/use-toast'
@@ -212,6 +212,23 @@ export function useEmailApi() {
     }
   }, [handleApiError])
 
+  const sendEmail = useCallback(async (emailData: SendEmailRequest): Promise<boolean> => {
+    try {
+      const response = await emailApi.sendEmail(emailData)
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: response.message,
+        })
+        return true
+      }
+      return false
+    } catch (error) {
+      handleApiError(error, 'send email')
+      return false
+    }
+  }, [handleApiError, toast])
+
   return {
     emails,
     loading,
@@ -228,6 +245,7 @@ export function useEmailApi() {
     createAgentDraft,
     fetchEmailsWithAgent,
     getDrafts,
+    sendEmail,
     setEmails,
     setError,
   }
