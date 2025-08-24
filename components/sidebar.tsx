@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Inbox,
   Archive,
@@ -19,24 +19,28 @@ import {
   Bot,
   RefreshCw,
   FileText,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import type { EmailAccount, EmailFolder } from "@/types/email"
-import ThemeSwitcher from "@/components/theme-switcher"
-import { useMobile } from "@/hooks/use-mobile"
-import ComposeEmail from "@/components/compose-email"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import type { EmailAccount, EmailFolder } from "@/types/email";
+import ThemeSwitcher from "@/components/theme-switcher";
+import { useMobile } from "@/hooks/use-mobile";
+import ComposeEmail from "@/components/compose-email";
 
 interface SidebarProps {
-  accounts: EmailAccount[]
-  selectedFolder: EmailFolder
-  onSelectFolder: (folder: EmailFolder) => void
-  onToggleSidebar: () => void
-  onSendEmail?: (email: any) => void
-  onToggleAgentDraft?: () => void
-  onFetchEmailsWithAgent?: () => Promise<void>
-  showAgentDraft?: boolean
+  accounts: EmailAccount[];
+  selectedFolder: EmailFolder;
+  onSelectFolder: (folder: EmailFolder) => void;
+  onToggleSidebar: () => void;
+  onSendEmail?: (email: any) => void;
+  onToggleAgentDraft?: () => void;
+  onFetchEmailsWithAgent?: () => Promise<void>;
+  showAgentDraft?: boolean;
 }
 
 export default function Sidebar({
@@ -49,9 +53,9 @@ export default function Sidebar({
   onFetchEmailsWithAgent,
   showAgentDraft,
 }: SidebarProps) {
-  const [accountsOpen, setAccountsOpen] = useState(true)
-  const [composeOpen, setComposeOpen] = useState(false)
-  const isMobile = useMobile()
+  const [accountsOpen, setAccountsOpen] = useState(true);
+  const [composeOpen, setComposeOpen] = useState(false);
+  const isMobile = useMobile();
 
   const folderItems = [
     { id: "unified", label: "Unified Inbox", icon: Inbox },
@@ -61,30 +65,42 @@ export default function Sidebar({
     { id: "drafts", label: "Drafts", icon: FileText },
     { id: "archived", label: "Archived", icon: Archive },
     { id: "trash", label: "Trash", icon: Trash2 },
-  ]
+  ];
 
   return (
     <div className="h-full flex flex-col bg-background/60 backdrop-blur-md w-64">
       <div className="p-4 flex items-center justify-between border-b border-border/50">
-        <h1 className="text-xl font-semibold">Mail</h1>
+        <div className="flex items-center justify-center mt-4">
+          <span className="text-xl font-semibold bg-gradient-to-r from-red-500 to-blue-500 bg-clip-text text-transparent">
+            SuperMail
+          </span>
+        </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-            {isMobile ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMobile ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>
 
       <ScrollArea className="flex-1">
         <div className="p-2">
-          <Button variant="default" className="w-full justify-start mb-2" onClick={() => setComposeOpen(true)}>
+          <Button
+            variant="default"
+            className="w-full justify-start mb-2"
+            onClick={() => setComposeOpen(true)}
+          >
             <PenSquare className="mr-2 h-4 w-4" />
             Compose
           </Button>
 
           {/* Agent Draft Button */}
-          <Button 
+          <Button
             variant={showAgentDraft ? "secondary" : "outline"}
-            className="w-full justify-start mb-2" 
+            className="w-full justify-start mb-2"
             onClick={onToggleAgentDraft}
           >
             <Bot className="mr-2 h-4 w-4" />
@@ -92,9 +108,9 @@ export default function Sidebar({
           </Button>
 
           {/* Fetch Emails with Agent Button */}
-          <Button 
+          <Button
             variant="outline"
-            className="w-full justify-start mb-4" 
+            className="w-full justify-start mb-4"
             onClick={onFetchEmailsWithAgent}
           >
             <RefreshCw className="mr-2 h-4 w-4" />
@@ -104,7 +120,7 @@ export default function Sidebar({
           {/* Main folders */}
           <div className="space-y-1 mb-4">
             {folderItems.map((item) => {
-              const Icon = item.icon
+              const Icon = item.icon;
               return (
                 <Button
                   key={item.id}
@@ -115,34 +131,50 @@ export default function Sidebar({
                   <Icon className="mr-2 h-4 w-4" />
                   {item.label}
                 </Button>
-              )
+              );
             })}
           </div>
 
           {/* Accounts */}
-          <Collapsible open={accountsOpen} onOpenChange={setAccountsOpen} className="mb-4">
+          <Collapsible
+            open={accountsOpen}
+            onOpenChange={setAccountsOpen}
+            className="mb-4"
+          >
             <CollapsibleTrigger asChild>
               <Button variant="ghost" className="w-full justify-between">
                 <span className="flex items-center">
                   <Mail className="mr-2 h-4 w-4" />
                   Accounts
                 </span>
-                {accountsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                {accountsOpen ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="pl-4 space-y-1">
               {accounts.map((account) => (
                 <Button
                   key={account.id}
-                  variant={selectedFolder === account.id ? "secondary" : "ghost"}
+                  variant={
+                    selectedFolder === account.id ? "secondary" : "ghost"
+                  }
                   className="w-full justify-start"
                   onClick={() => onSelectFolder(account.id as EmailFolder)}
                 >
-                  <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: account.color }} />
+                  <span
+                    className="w-3 h-3 rounded-full mr-2"
+                    style={{ backgroundColor: account.color }}
+                  />
                   {account.name}
                 </Button>
               ))}
-              <Button variant="ghost" className="w-full justify-start text-muted-foreground">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-muted-foreground"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add Account
               </Button>
@@ -159,7 +191,11 @@ export default function Sidebar({
       </div>
 
       {/* Compose Email Modal */}
-      <ComposeEmail open={composeOpen} onClose={() => setComposeOpen(false)} onSend={onSendEmail} />
+      <ComposeEmail
+        open={composeOpen}
+        onClose={() => setComposeOpen(false)}
+        onSend={onSendEmail}
+      />
     </div>
-  )
+  );
 }

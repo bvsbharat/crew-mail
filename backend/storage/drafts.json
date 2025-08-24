@@ -1,0 +1,66 @@
+[
+  {
+    "emails": [
+      {
+        "id": "198d8e94a97f4c7a",
+        "threadId": "198d8e94a97f4c7a",
+        "snippet": "Hi Bharat, Congratulations on winning the hackathon! Can you send me your PayPal information so I can send the prize money your way? This is your coup...",
+        "sender": "marco@vapi.ai"
+      }
+    ],
+    "formatted_emails": "ID: 198d8e94a97f4c7a\n- Thread ID: 198d8e94a97f4c7a\n- Snippet: Hi Bharat, Congratulations on winning the hackathon! Can you send me your PayPal information so I can send the prize money your way? This is your coup...\n- From: marco@vapi.ai\n--------",
+    "agent_response": "The draft response has been successfully created, addressing the need for verification before providing any sensitive information. The draft is ready for review and sending:\n\n---\n\nTo: marco@vapi.ai  \nSubject: Request for Verification  \n\nDear Marco,\n\nThank you for reaching out regarding the prize money for the hackathon. Before proceeding, I kindly request verification of your association with the hackathon and confirmation of the prize details. Please provide any official documentation or contact details of the organizers that I can use to verify this information.\n\nLooking forward to your response.\n\nBest regards,  \n[Your Name]\n\n---",
+    "response_type": "agent_generated",
+    "status": "draft",
+    "created_at": "2025-08-23T15:18:51.708957",
+    "draft_id": "draft_1_1755987531"
+  },
+  {
+    "emails": [
+      {
+        "id": "test123",
+        "threadId": "test123",
+        "snippet": "This is a test email...",
+        "sender": "test@example.com"
+      }
+    ],
+    "formatted_emails": "ID: test123\n- Thread ID: test123\n- Snippet: This is a test email...\n- From: test@example.com\n--------",
+    "agent_response": "Thought: I need to retrieve the email content using a valid thread ID to compose the draft responses. Since \"test123\" is not a valid thread ID, I will need to request access to the complete email content or a correct thread ID to proceed with drafting responses.\n\nAction: None (I need either a valid thread ID or the complete email content to proceed).",
+    "response_type": "agent_generated",
+    "status": "draft",
+    "created_at": "2025-08-23T15:19:15.221198",
+    "draft_id": "draft_2_1755987555"
+  },
+  {
+    "emails": [
+      {
+        "id": "test-email-123",
+        "threadId": "thread-456",
+        "snippet": "Hi, I wanted to follow up on our meeting yesterday. Could you please send me the project timeline?",
+        "sender": "john.doe@example.com"
+      }
+    ],
+    "formatted_emails": "ID: test-email-123\n- Thread ID: thread-456\n- Snippet: Hi, I wanted to follow up on our meeting yesterday. Could you please send me the project timeline?\n- From: john.doe@example.com\n--------",
+    "agent_response": "The draft response to John Doe has been created successfully. It includes an acknowledgment of his follow-up, a commitment to deliver the project timeline by a specified date, and contact information for further queries.\n\nHere is the draft content:\n\nTo: john.doe@example.com\nSubject: Project Timeline Request\nMessage:\nHi John,\n\nThank you for following up on our meeting yesterday. I understand the importance of the project timeline for our ongoing work.\n\nI am currently finalizing the details of the timeline and will have it ready to send to you by [insert date/time here]. I appreciate your patience and will ensure you receive the timeline promptly to avoid any delays in our project.\n\nPlease let me know if there is anything else you need in the meantime.\n\nBest regards,\n[Your Name]\n[Your Position]\n[Your Contact Information]",
+    "response_type": "agent_generated",
+    "status": "draft",
+    "created_at": "2025-08-23T15:24:22.503540",
+    "draft_id": "draft_3_1755987862"
+  },
+  {
+    "emails": [
+      {
+        "id": "test-123",
+        "threadId": "thread-456",
+        "snippet": "Hello, can you send me the report?",
+        "sender": "test@example.com"
+      }
+    ],
+    "formatted_emails": "ID: test-123\n- Thread ID: thread-456\n- Snippet: Hello, can you send me the report?\n- From: test@example.com\n--------",
+    "agent_response": "The draft response to the email from test@example.com has been successfully created. Here is the content of the draft:\n\nTo: test@example.com\nSubject: Requested Report\n\nDear [Sender's Name],\n\nI hope this message finds you well. Please find attached the report you requested. If you have any further questions or need additional information, feel free to reach out.\n\nBest regards,\n[Your Name]",
+    "response_type": "agent_generated",
+    "status": "draft",
+    "created_at": "2025-08-23T15:25:01.858454",
+    "draft_id": "draft_4_1755987901"
+  }
+]

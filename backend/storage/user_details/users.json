@@ -1,0 +1,58 @@
+{
+  "marco@vapi.ai": {
+    "email": "marco@vapi.ai",
+    "name": "Marco",
+    "company": "And Job Title\": \"Vapi, Ai Assistant\",",
+    "created_at": "2025-08-23T17:29:58.423429",
+    "updated_at": "2025-08-23T17:29:58.423551",
+    "source": "exa+serper+perplexity"
+  },
+  "bharatbvs@icloud.com": {
+    "email": "bharatbvs@icloud.com",
+    "name": "Bharat Bvs",
+    "company": null,
+    "created_at": "2025-08-23T16:14:59.211773",
+    "updated_at": "2025-08-23T16:14:59.211848",
+    "source": "exa"
+  },
+  "keti@kumo.ai": {
+    "email": "keti@kumo.ai",
+    "name": "Keti Jovanovska",
+    "company": null,
+    "created_at": "2025-08-23T16:14:42.399602",
+    "updated_at": "2025-08-23T16:14:42.399674",
+    "source": "exa"
+  },
+  "abhi@mastra.ai": {
+    "email": "abhi@mastra.ai",
+    "name": "Abhi Aiyer",
+    "company": null,
+    "created_at": "2025-08-23T16:14:52.189278",
+    "updated_at": "2025-08-23T16:14:52.189676",
+    "source": "exa"
+  },
+  "sarah.johnson@startup.com": {
+    "email": "sarah.johnson@startup.com",
+    "name": "Sarah Johnson",
+    "company": null,
+    "created_at": "2025-08-23T16:30:11.039785",
+    "updated_at": "2025-08-23T16:30:11.040182",
+    "source": "exa+serper"
+  },
+  "john.smith@techcorp.com": {
+    "email": "john.smith@techcorp.com",
+    "name": "John Smith",
+    "company": null,
+    "created_at": "2025-08-23T16:31:33.870738",
+    "updated_at": "2025-08-23T16:31:33.870841",
+    "source": "exa+serper"
+  },
+  "test.user@example.com": {
+    "email": "test.user@example.com",
+    "name": "Test User",
+    "company": "And Role**:",
+    "created_at": "2025-08-23T16:36:03.034322",
+    "updated_at": "2025-08-23T16:36:03.034743",
+    "source": "exa+serper+perplexity"
+  }
+}

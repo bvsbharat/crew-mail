@@ -1,0 +1,54 @@
+filter_emails:
+  description: >
+    Analyze and filter incoming emails to categorize them based on importance, urgency, and required actions.
+    
+    EMAILS TO PROCESS:
+    {emails}
+    
+    Your task is to:
+    1. Review each email's content, sender, and subject
+    2. Categorize emails by importance (high, medium, low)
+    3. Identify spam or promotional emails that can be ignored
+    4. Flag emails that require immediate attention or responses
+    5. Provide a summary of your filtering decisions
+    
+  expected_output: >
+    A detailed analysis of each email with categorization, importance level, and recommended actions.
+    Include reasoning for your filtering decisions.
+  agent: email_filter_agent
+
+action_required_emails:
+  description: >
+    Determine specific actions required for filtered emails and prioritize them accordingly.
+    
+    Based on the filtered emails, identify:
+    1. Emails that need immediate responses
+    2. Emails that require follow-up actions
+    3. Emails that can be archived or marked as read
+    4. Priority order for handling the emails
+    
+  expected_output: >
+    A prioritized action plan for each email, specifying what type of response or action is needed
+    and the recommended timeline for completion.
+  agent: email_action_agent
+
+draft_responses:
+  description: >
+    Compose professional draft responses for emails that require replies.
+    
+    For each email that needs a response:
+    1. Analyze the sender's message and intent
+    2. Extract the sender's email address from the "From:" field (if it contains angle brackets like "Name <email@domain.com>", extract only the email part between < and >)
+    3. Craft an appropriate, professional response
+    4. Ensure the tone matches the context and relationship
+    5. Include all necessary information and next steps
+    6. Create the draft using the Gmail draft creation tool with the format: actual_email@domain.com|Subject|Message
+    
+    IMPORTANT: When using the Create Draft tool, you MUST use the actual email address extracted from the "From:" field, not placeholder text like "sender's email address" or "Riya's email address". 
+    
+    Example: If the email shows "From: John Doe <john.doe@company.com>", use "john.doe@company.com" in the Create Draft tool.
+    
+  expected_output: >
+    Professional email draft responses that address the sender's needs appropriately.
+    Each draft should be ready for review and sending with proper email addresses.
+  agent: email_response_writer

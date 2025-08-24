@@ -43,6 +43,8 @@ export default function EmailList({
   selectedEmails = [],
 }: EmailListProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [sortBy, setSortBy] = useState<'date' | 'sender'>('date')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   // Filter emails based on search query
   const filteredEmails = emails.filter(
@@ -51,6 +53,29 @@ export default function EmailList({
       email.sender.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       email.content.toLowerCase().includes(searchQuery.toLowerCase()),
   )
+
+  // Sort emails based on selected criteria
+  const sortedEmails = [...filteredEmails].sort((a, b) => {
+    if (sortBy === 'date') {
+      const dateA = new Date(a.date).getTime()
+      const dateB = new Date(b.date).getTime()
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB
+    } else if (sortBy === 'sender') {
+      const nameA = a.sender.name.toLowerCase()
+      const nameB = b.sender.name.toLowerCase()
+      return sortOrder === 'desc' ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB)
+    }
+    return 0
+  })
+
+  const handleSortChange = (newSortBy: 'date' | 'sender') => {
+    if (sortBy === newSortBy) {
+      setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')
+    } else {
+      setSortBy(newSortBy)
+      setSortOrder('desc')
+    }
+  }
 
   // Get folder name for display
   const getFolderName = () => {
@@ -90,8 +115,18 @@ export default function EmailList({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Mark all as read</DropdownMenuItem>
-              <DropdownMenuItem>Sort by date</DropdownMenuItem>
-              <DropdownMenuItem>Sort by sender</DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleSortChange('date')}
+                className={sortBy === 'date' ? 'bg-accent' : ''}
+              >
+                Sort by date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleSortChange('sender')}
+                className={sortBy === 'sender' ? 'bg-accent' : ''}
+              >
+                Sort by sender {sortBy === 'sender' && (sortOrder === 'desc' ? '↓' : '↑')}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -118,13 +153,13 @@ export default function EmailList({
             <p className="text-red-500 text-center px-4">{error}</p>
             <p className="text-sm mt-2">Check that the backend API is running</p>
           </div>
-        ) : filteredEmails.length === 0 ? (
+        ) : sortedEmails.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <p>No emails found</p>
           </div>
         ) : (
           <div className="divide-y divide-border/50">
-            {filteredEmails.map((email) => (
+            {sortedEmails.map((email) => (
               <EmailListItem
                 key={email.id}
                 email={email}
@@ -206,7 +241,10 @@ function EmailListItem({ email, isSelected, onSelect, onArchive, onDelete, onSno
       } ${!email.read ? "font-medium" : ""} ${
         isSelectedForDraft ? "bg-blue-50 dark:bg-blue-950/20" : ""
       }`}
-      onClick={showCheckbox ? undefined : onSelect}
+      onClick={(e) => {
+        // Allow email selection even when checkboxes are shown
+        onSelect()
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

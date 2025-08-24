@@ -15,8 +15,11 @@ import {
   Instagram,
   Facebook,
   ExternalLink,
+  Loader2,
 } from "lucide-react"
+import { useState, useEffect } from "react"
 import type { EmailSender } from "@/types/email"
+import { userApi, type UserDetails } from "@/lib/api"
 
 interface SenderProfileProps {
   sender: EmailSender | null
@@ -25,24 +28,89 @@ interface SenderProfileProps {
 }
 
 export default function SenderProfile({ sender, open, onClose }: SenderProfileProps) {
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   if (!sender) return null
 
-  // Mock data for the profile
+  // Fetch user details when component opens
+  useEffect(() => {
+    if (open && sender) {
+      handleFetchUserDetails()
+    }
+  }, [open, sender])
+
+  const handleFetchUserDetails = async () => {
+    if (!sender) return
+    
+    setLoading(true)
+    setError(null)
+    
+    try {
+      // First try to get existing user details
+      const existingResponse = await userApi.getUserByEmail(sender.email)
+      
+      if (existingResponse.success && existingResponse.user_details) {
+        setUserDetails(existingResponse.user_details)
+      } else {
+        // If not found, trigger EXA search
+        const searchResponse = await userApi.getUserDetails({
+          email: sender.email,
+          name: sender.name,
+          force_refresh: false
+        })
+        
+        if (searchResponse.success && searchResponse.user_details) {
+          setUserDetails(searchResponse.user_details)
+        } else if (searchResponse.message.includes('initiated')) {
+          // Search was initiated, show loading and poll for results
+          setError('Researching professional information... This may take a few moments.')
+          // Poll for results every 3 seconds
+          const pollInterval = setInterval(async () => {
+            try {
+              const pollResponse = await userApi.getUserByEmail(sender.email)
+              if (pollResponse.success && pollResponse.user_details) {
+                setUserDetails(pollResponse.user_details)
+                setError(null)
+                clearInterval(pollInterval)
+              }
+            } catch (err) {
+              console.error('Error polling for user details:', err)
+            }
+          }, 3000)
+          
+          // Clear interval after 30 seconds
+          setTimeout(() => clearInterval(pollInterval), 30000)
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching user details:', err)
+      setError('Failed to load professional information')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Create profile data from userDetails or fallback to basic info
   const profile = {
-    bio: sender.organization
-      ? `${sender.name} works at ${sender.organization.name} as a Product Manager.`
-      : `${sender.name} is a freelance designer based in San Francisco.`,
-    location: "San Francisco, CA",
-    timezone: "Pacific Time (GMT-7)",
-    lastContacted: "3 days ago",
+    bio: userDetails?.bio || 
+         (sender.organization
+           ? `${sender.name} works at ${sender.organization.name}.`
+           : `Professional information for ${sender.name}.`),
+    location: userDetails?.location || "Location not available",
+    company: userDetails?.company || sender.organization?.name || "Company not available",
+    role: userDetails?.role || "Role not available",
+    industry: userDetails?.industry || "Industry not available",
+    lastContacted: "Recently", // This would come from email history
     meetingHistory: [
       { title: "Project Kickoff", date: "April 15, 2023" },
       { title: "Design Review", date: "April 22, 2023" },
     ],
     socialLinks: [
-      { platform: "Twitter", url: "https://twitter.com" },
-      { platform: "LinkedIn", url: "https://linkedin.com" },
-      { platform: "GitHub", url: "https://github.com" },
+      ...(userDetails?.linkedin_url ? [{ platform: "LinkedIn", url: userDetails.linkedin_url }] : []),
+      ...(userDetails?.twitter_url ? [{ platform: "Twitter", url: userDetails.twitter_url }] : []),
+      ...(userDetails?.website ? [{ platform: "Website", url: userDetails.website }] : []),
     ],
   }
 
@@ -122,7 +190,26 @@ export default function SenderProfile({ sender, open, onClose }: SenderProfilePr
           {/* Bio section */}
           <div>
             <h4 className="text-sm font-medium mb-2">About</h4>
-            <p className="text-sm text-muted-foreground">{profile.bio}</p>
+            {loading ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading professional information...
+              </div>
+            ) : error ? (
+              <div className="text-sm text-muted-foreground">
+                {error}
+                <Button 
+                  variant="link" 
+                  size="sm" 
+                  className="p-0 h-auto ml-2"
+                  onClick={handleFetchUserDetails}
+                >
+                  Retry
+                </Button>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">{profile.bio}</p>
+            )}
           </div>
 
           {/* Contact details */}
@@ -134,13 +221,21 @@ export default function SenderProfile({ sender, open, onClose }: SenderProfilePr
                 <span>{profile.location}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span>{profile.timezone}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
                 <Briefcase className="h-4 w-4 text-muted-foreground" />
-                <span>{sender.organization?.name || "Freelancer"}</span>
+                <span>{profile.company}</span>
               </div>
+              {userDetails?.role && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                  <span>{profile.role}</span>
+                </div>
+              )}
+              {userDetails?.industry && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                  <span>{profile.industry}</span>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-sm">
                 <MessageSquare className="h-4 w-4 text-muted-foreground" />
                 <span>Last contacted {profile.lastContacted}</span>
@@ -149,23 +244,25 @@ export default function SenderProfile({ sender, open, onClose }: SenderProfilePr
           </div>
 
           {/* Social links */}
-          <div>
-            <h4 className="text-sm font-medium mb-2">Social</h4>
-            <div className="flex flex-wrap gap-2">
-              {profile.socialLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs bg-muted hover:bg-muted/80 transition-colors"
-                >
-                  {getSocialIcon(link.platform)}
-                  {link.platform}
-                </a>
-              ))}
+          {profile.socialLinks.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium mb-2">Social</h4>
+              <div className="flex flex-wrap gap-2">
+                {profile.socialLinks.map((link, index) => (
+                  <a
+                    key={index}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs bg-muted hover:bg-muted/80 transition-colors"
+                  >
+                    {getSocialIcon(link.platform)}
+                    {link.platform}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Meeting history */}
           <div>

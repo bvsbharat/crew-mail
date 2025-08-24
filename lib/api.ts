@@ -89,6 +89,42 @@ export interface SendEmailResponse {
   email_id?: string
 }
 
+export interface UserDetails {
+  email: string
+  name?: string
+  company?: string
+  role?: string
+  bio?: string
+  linkedin_url?: string
+  twitter_url?: string
+  website?: string
+  location?: string
+  industry?: string
+  created_at: string
+  updated_at: string
+  source: string
+}
+
+export interface UserSearchRequest {
+  email: string
+  name?: string
+  force_refresh?: boolean
+}
+
+export interface UserDetailsResponse {
+  success: boolean
+  user_details?: UserDetails
+  message: string
+  from_cache: boolean
+}
+
+export interface UserSearchResponse {
+  success: boolean
+  users: UserDetails[]
+  total_count: number
+  message: string
+}
+
 class ApiError extends Error {
   constructor(message: string, public status?: number) {
     super(message)
@@ -216,6 +252,33 @@ export const emailApi = {
 
   async getDrafts(): Promise<{ success: boolean; drafts: any[]; total_count: number }> {
     return fetchApi('/api/drafts')
+  },
+}
+
+export const userApi = {
+  async getUserDetails(request: UserSearchRequest): Promise<UserDetailsResponse> {
+    return fetchApi('/api/users/details', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    })
+  },
+
+  async getUserByEmail(email: string): Promise<UserDetailsResponse> {
+    return fetchApi(`/api/users/${encodeURIComponent(email)}`)
+  },
+
+  async searchUsers(query: string, limit = 10): Promise<UserSearchResponse> {
+    return fetchApi(`/api/users/search/${encodeURIComponent(query)}?limit=${limit}`)
+  },
+
+  async getAllUsers(limit = 50): Promise<UserSearchResponse> {
+    return fetchApi(`/api/users?limit=${limit}`)
+  },
+
+  async deleteUser(email: string): Promise<{ success: boolean; message: string }> {
+    return fetchApi(`/api/users/${encodeURIComponent(email)}`, {
+      method: 'DELETE',
+    })
   },
 }
 

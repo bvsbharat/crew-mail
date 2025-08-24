@@ -26,7 +26,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# backend
-/backend
+# backend env files only
 /backend/.env*
 /backend/.env.test*

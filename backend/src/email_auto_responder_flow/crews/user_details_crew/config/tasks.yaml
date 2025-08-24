@@ -1,0 +1,91 @@
+research_user_details:
+  description: >
+    Research comprehensive professional information about a user with email: {email} and name: {name}.
+    Use both EXA and Serper search tools to find:
+    - LinkedIn profile and professional background
+    - Current company and role
+    - Professional bio and experience
+    - Social media profiles (Twitter, personal website)
+    - Location and industry information
+    - News mentions and recent activities
+    - Any other relevant professional details
+    
+    Search query: {search_query}
+    
+    Use multiple search strategies with both tools to get comprehensive results.
+    Focus on finding accurate, up-to-date information from reliable sources.
+    Prioritize LinkedIn and professional networking sites.
+  expected_output: >
+    A comprehensive report from EXA search containing:
+    - Full name and email
+    - Current company and job title
+    - Professional bio/summary
+    - LinkedIn URL
+    - Twitter/X URL (if available)
+    - Personal/company website (if available)
+    - Location
+    - Industry
+    - Any additional relevant professional information
+    
+    Format the output as structured data that can be easily parsed.
+  agent: user_research_agent
+
+serper_research:
+  description: >
+    Conduct additional research using Serper Google Search API for user with email: {email} and name: {name}.
+    Use Serper search tool to find:
+    - LinkedIn profile verification and additional details
+    - Company information and recent news
+    - Professional achievements and mentions
+    - Social media presence and activity
+    - Industry recognition and awards
+    - Recent publications or articles
+    - Conference speaking engagements
+    - Professional certifications
+    
+    Search query: {search_query}
+    
+    Focus on finding current information and cross-referencing with EXA results.
+    Look for recent news, achievements, and professional updates.
+  expected_output: >
+    A detailed Google search report containing:
+    - Verified professional information
+    - Recent news mentions and achievements
+    - Additional social media profiles
+    - Company and industry context
+    - Professional recognition and awards
+    - Recent activities and publications
+    - Cross-referenced contact information
+    
+    Format as structured data for easy integration with EXA results.
+  agent: serper_research_agent
+
+validate_and_store:
+  description: >
+    Validate, merge, and structure the researched user information from both EXA and Serper research tasks.
+    Ensure data quality by:
+    - Merging information from both EXA and Serper sources
+    - Cross-referencing data for accuracy and consistency
+    - Resolving conflicts between different sources
+    - Verifying the accuracy of found information
+    - Removing any duplicate or conflicting data
+    - Standardizing format and structure
+    - Ensuring all URLs are valid and properly formatted
+    - Checking that the information matches the requested user
+    - Prioritizing more recent and reliable information
+    
+    Clean, merge, and organize the data for storage in the user database.
+  expected_output: >
+    A comprehensive, clean, validated, and structured user profile containing:
+    - Verified email and name
+    - Confirmed company and role (with recent updates)
+    - Comprehensive professional bio merged from multiple sources
+    - Validated URLs (LinkedIn, Twitter, website, company)
+    - Standardized location and industry
+    - Recent achievements and news mentions
+    - Professional certifications and recognition
+    - Data quality score and confidence level
+    - Source attribution for each piece of information
+    
+    Output should be ready for database storage with enhanced detail from multiple sources.
+  agent: data_validation_agent

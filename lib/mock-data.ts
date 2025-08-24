@@ -4,13 +4,13 @@ export const mockAccounts: EmailAccount[] = [
   {
     id: "personal",
     name: "Personal",
-    email: "your.email@gmail.com",
+    email: "bbvsbharat@gmail.com",
     color: "#4285F4",
   },
   {
     id: "work",
     name: "Work",
-    email: "your.name@company.com",
+    email: "bbvsbharat@gmail.com",
     color: "#EA4335",
   },
 ]
@@ -44,7 +44,7 @@ export const mockEmails: Email[] = [
     recipients: [
       {
         name: "You",
-        email: "your.name@company.com",
+        email: "bbvsbharat@gmail.com",
       },
     ],
     content: `Hi team,
@@ -88,7 +88,7 @@ Alex`,
     recipients: [
       {
         name: "You",
-        email: "your.email@gmail.com",
+        email: "bbvsbharat@gmail.com",
       },
     ],
     content: `Hey!
@@ -130,7 +130,7 @@ Sarah`,
     recipients: [
       {
         name: "You",
-        email: "your.email@gmail.com",
+        email: "bbvsbharat@gmail.com",
       },
     ],
     content: `Dear Customer,
@@ -185,7 +185,7 @@ Billing Department`,
     recipients: [
       {
         name: "You",
-        email: "your.name@company.com",
+        email: "bbvsbharat@gmail.com",
       },
       {
         name: "Project Team",
@@ -232,7 +232,7 @@ Project Manager`,
     recipients: [
       {
         name: "You",
-        email: "your.email@gmail.com",
+        email: "bbvsbharat@gmail.com",
       },
     ],
     content: `Hi there!
@@ -329,7 +329,7 @@ Finance Team`,
     recipients: [
       {
         name: "You",
-        email: "your.email@gmail.com",
+        email: "bbvsbharat@gmail.com",
       },
     ],
     content: `Dear Passenger,
@@ -387,7 +387,7 @@ Airline Bookings`,
     recipients: [
       {
         name: "You",
-        email: "your.name@company.com",
+        email: "bbvsbharat@gmail.com",
       },
     ],
     content: `Hello,

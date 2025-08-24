@@ -43,30 +43,31 @@ export default function EmailClient() {
   // Filter emails based on selected folder
   const filteredEmails = useMemo(() => {
     if (selectedFolder === "drafts") {
-      // Convert drafts to email format for display
+      // Only show actual draft emails - return drafts array converted to email format
       return drafts.map((draft) => ({
-        id: draft.id,
-        subject: draft.subject,
+        id: draft.draft_id || draft.id,
+        subject: draft.subject || "Draft Response",
         sender: {
           name: "AI Assistant",
-          email: "ai@assistant.com",
+          email: "ai@assistant.com"
         },
         recipients: [],
-        content: draft.content,
-        date: new Date().toISOString(),
-        read: false,
+        content: draft.content || "No content available",
+        date: draft.created_at || new Date().toISOString(),
+        read: true,
         flagged: false,
         snoozed: false,
         archived: false,
         deleted: false,
-        account: "work",
-        labels: [],
+        account: "drafts",
+        labels: ["draft"],
         categories: [],
         attachments: [],
         drafts: []
       }))
     }
 
+    // For all other folders, filter regular emails (exclude drafts folder completely)
     return emails.filter((email) => {
       if (email.deleted) return false
       if (email.snoozed) return selectedFolder === "snoozed"
@@ -142,13 +143,11 @@ export default function EmailClient() {
     // Mark as read locally
     setEmails(prevEmails => prevEmails.map((e) => (e.id === email.id ? { ...e, read: true } : e)))
 
-    // Fetch full email details if needed
-    if (!email.content || email.content === email.sender.name) {
-      const fullEmail = await fetchEmailDetails(email.id)
-      if (fullEmail) {
-        setSelectedEmail(fullEmail)
-        setEmails(prevEmails => prevEmails.map((e) => (e.id === email.id ? { ...e, ...fullEmail } : e)))
-      }
+    // Always fetch full email details to ensure we have latest drafts
+    const fullEmail = await fetchEmailDetails(email.id)
+    if (fullEmail) {
+      setSelectedEmail(fullEmail)
+      setEmails(prevEmails => prevEmails.map((e) => (e.id === email.id ? { ...e, ...fullEmail } : e)))
     }
 
     // Open detail view on mobile
