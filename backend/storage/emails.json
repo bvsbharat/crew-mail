@@ -42,5 +42,32 @@
     "subject": "How are doing this monday ?",
     "body": "Hi,\r\n\r\nHow are you doing this Monday?\r\n\r\nI need some data \r\n\r\nRegards,\r\nRiya  \r\n",
     "fetched_at": "2025-08-23T16:02:43.025426"
+  },
+  {
+    "id": "198d9c68932a5430",
+    "threadId": "198d9c68932a5430",
+    "snippet": "Could you tell me how to work with crewai ?",
+    "sender": "Bharat <uibharat@gmail.com>",
+    "subject": "How is demo with crew ai",
+    "body": "Could you tell me how to work with crewai ?\r\n",
+    "fetched_at": "2025-08-23T19:21:44.079390"
+  },
+  {
+    "id": "198d9ba240e12582",
+    "threadId": "198d9ba240e12582",
+    "snippet": "Are you done with email Regards, Riya",
+    "sender": "Bharat <uibharat@gmail.com>",
+    "subject": "Are you done with email",
+    "body": "Are you done with email\r\n\r\nRegards,\r\nRiya\r\n",
+    "fetched_at": "2025-08-23T19:21:44.079414"
+  },
+  {
+    "id": "198d9e43a6fba73b",
+    "threadId": "198d9e43a6fba73b",
+    "snippet": "https://meet.google.com/hhg-fjcv-cji -- João (Joe) Moura CEO at crewAI 628-488-6760",
+    "sender": "Joe Moura <joao@crewai.com>",
+    "subject": "link",
+    "body": "https://meet.google.com/hhg-fjcv-cji\r\n\r\n-- \r\n\r\nJoão (Joe) Moura\r\n\r\nCEO at crewAI\r\n628-488-6760\r\n",
+    "fetched_at": "2025-08-23T19:27:07.829140"
   }
 ]

@@ -9,7 +9,7 @@
       }
     ],
     "formatted_emails": "ID: 198d8e94a97f4c7a\n- Thread ID: 198d8e94a97f4c7a\n- Snippet: Hi Bharat, Congratulations on winning the hackathon! Can you send me your PayPal information so I can send the prize money your way? This is your coup...\n- From: marco@vapi.ai\n--------",
-    "agent_response": "The draft response has been successfully created, addressing the need for verification before providing any sensitive information. The draft is ready for review and sending:\n\n---\n\nTo: marco@vapi.ai  \nSubject: Request for Verification  \n\nDear Marco,\n\nThank you for reaching out regarding the prize money for the hackathon. Before proceeding, I kindly request verification of your association with the hackathon and confirmation of the prize details. Please provide any official documentation or contact details of the organizers that I can use to verify this information.\n\nLooking forward to your response.\n\nBest regards,  \n[Your Name]\n\n---",
+    "agent_response": "Request for Verification  \n\nDear Marco,\n\nThank you for reaching out regarding the prize money for the hackathon. Before proceeding, I kindly request verification of your association with the hackathon and confirmation of the prize details. .\n\nBest regards,  \n[Bharat]\n\n---",
     "response_type": "agent_generated",
     "status": "draft",
     "created_at": "2025-08-23T15:18:51.708957",

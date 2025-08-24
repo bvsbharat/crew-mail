@@ -54,5 +54,21 @@
     "created_at": "2025-08-23T16:36:03.034322",
     "updated_at": "2025-08-23T16:36:03.034743",
     "source": "exa+serper+perplexity"
+  },
+  "uibharat@gmail.com": {
+    "email": "uibharat@gmail.com",
+    "name": "Bharat",
+    "company": "And Role**:",
+    "created_at": "2025-08-23T19:22:29.997342",
+    "updated_at": "2025-08-23T19:22:29.997729",
+    "source": "exa+serper+perplexity"
+  },
+  "joao@crewai.com": {
+    "email": "joao@crewai.com",
+    "name": "Joe Moura",
+    "company": "** Crewai",
+    "created_at": "2025-08-23T19:27:36.169162",
+    "updated_at": "2025-08-23T19:27:36.169305",
+    "source": "exa+serper+perplexity"
   }
 }
